@@ -20,8 +20,16 @@ composer require First-Iraqi-Bank/fib-php-payment-sdk
 ### Configuration
 To configure the SDK, you need to set the following environment variables:
 
-- `FIB_API_KEY`: Your FIB payment API key.
-- `FIB_API_SECRET`: Your FIB payment API secret.
+  - `FIB_API_KEY`: Your FIB payment API key.
+  - `FIB_API_SECRET`: Your FIB payment API secret.
+  - `FIB_BASE_URL`: The base URL for the FIB payment API (default: https://api.fibpayment.com).
+  - `FIB_GRANT_TYPE`: The grant type for authentication with the FIB payment API (default: client_credentials).
+  - `FIB_REFUNDABLE_FOR`: The period for which transactions can be refunded (default: P7D, which stands for 7 days).
+  - `FIB_CURRENCY`: The currency used for transactions with the FIB payment system (default: IQD).
+  - `FIB_CALLBACK_URL`: The callback URL for handling payment notifications from the FIB payment system.
+  - `FIB_ACCOUNT`: The FIB payment account identifier.
+
+Make sure to set these environment variables appropriately in your application's environment configuration.
 
 
 ### Documentation
