@@ -1,0 +1,61 @@
+# Ignore vendor directory
+/vendor
+
+# Ignore Composer lock file
+composer.lock
+
+# Ignore PHPStorm project files
+.idea/
+
+# Ignore Laravel Mix build files
+/public/build/
+/public/hot/
+
+# Ignore Laravel storage directory
+/storage/*.key
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
+/storage/framework/views/*
+/storage/logs/*
+
+# Ignore PHPUnit cache
+/.phpunit.cache
+
+# Ignore Node.js modules
+/node_modules
+
+# Ignore PHPUnit XML test results
+/phpunit.xml
+
+# Ignore Laravel Homestead configuration
+Homestead.json
+Homestead.yaml
+
+# Ignore Composer auth file
+auth.json
+
+# Ignore npm and Yarn logs
+npm-debug.log
+yarn-error.log
+
+# Ignore Fleet
+/.fleet
+
+# Ignore VSCode settings
+.vscode/
+
+# Ignore environment-specific files
+.env
+.env.testing
+
+# Ignore editor backup files
+*~
+
+# Ignore Laravel Mix manifest and mix-manifest.json
+mix-manifest.json
+/public/mix-manifest.json
+
+# Ignore any other build or distribution files
+/build/
+/dist/
