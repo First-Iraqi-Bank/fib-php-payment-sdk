@@ -1,0 +1,56 @@
+{
+    "name": "first-iraqi-bank/fib-payment-sdk",
+    "description": "SDK for integrating with the FIB payment system, enabling user authentication and payment transactions.",
+    "type": "library",
+    "keywords": [
+        "sdk",
+        "fib",
+        "payment",
+        "integration"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Gateway ICT",
+            "email": "info@the-gw.com",
+            "homepage": "https://the-gw.com/"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^7.4",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "FirstIraqiBank\\FIBPaymentSDK\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FirstIraqiBank\\FIBPaymentSDK\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/First-Iraqi-Bank/fib-php-payment-sdk"
+        }
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "FirstIraqiBank\\FIBPaymentSDK\\FIBPaymentServiceProvider"
+            ]
+        }
+    }
+}
