@@ -31,6 +31,29 @@ To configure the SDK, you need to set the following environment variables:
 
 Make sure to set these environment variables appropriately in your application's environment configuration.
 
+### Publishing Configuration File
+To customize the FIB Payment SDK configuration according to your application's requirements, you can publish the configuration file to your Laravel project. Follow the steps below to publish the configuration file:
+
+Run the Command:
+
+Open your terminal and navigate to your Laravel project's directory. Then, run the following Artisan command:
+
+```bash
+  php artisan vendor:publish --tag=fib-payment-sdk-config
+```
+
+This command will publish the configuration file to your Laravel project.
+
+#### Locate the Configuration File:
+
+After running the command, you can find the published configuration file in the config directory of your Laravel project.
+
+#### Customize Configuration:
+
+Open the published configuration file (config/fib.php) in your preferred text editor.
+You can modify the configuration options according to your needs.
+Ensure that you set the necessary environment variables in your .env file
+or provide default values directly in the configuration file.
 
 ### Documentation
 For more information on how to use the SDK, refer to the full documentation.
