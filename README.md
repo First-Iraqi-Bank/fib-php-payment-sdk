@@ -212,7 +212,10 @@ Thanks to the FIB Payment development team for their contributions. This SDK use
 
 ### Versioning
 
-We use SemVer for versioning. For the versions available, see the tags on this repository.
+We use semantic versioning (SemVer) principles for subsequent releases (v0.2.0, v0.3.0, etc.).
+For the versions available, see the tags on this repository.
+
+
 
 ### FAQ
 
