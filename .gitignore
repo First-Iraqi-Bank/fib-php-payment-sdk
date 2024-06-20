@@ -1,9 +1,6 @@
 # Ignore vendor directory
 /vendor
 
-# Ignore Composer lock file
-composer.lock
-
 # Ignore PHPStorm project files
 .idea/
 
@@ -18,6 +15,8 @@ composer.lock
 /storage/framework/testing/*
 /storage/framework/views/*
 /storage/logs/*
+/logs/*
+*.log
 
 # Ignore PHPUnit cache
 /.phpunit.cache
