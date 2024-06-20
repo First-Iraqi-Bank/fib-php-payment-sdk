@@ -31,32 +31,159 @@ To configure the SDK, you need to set the following environment variables:
 
 Make sure to set these environment variables appropriately in your application's environment configuration.
 
-### Usage
 
-Here's a basic example of how to use the SDK:
+### Usage the SDK
+
+Below is a basic example of how to use the SDK:
+
+#### Ensure Dependencies are Installed:
+Make sure you have installed all required dependencies using Composer:
+    ```bash
+      composer install
+    ```
+#### Set Up Environment Variables:
+   Create a .env file in the root directory of your project and configure the necessary environment variables. Refer to the .env.example file for the required variables.
+
+
+#### Create a Payment Example Usage
+- To create a payment, use the createPayment method. This method will return the payment details which you can store in a database or cache for later use in other functionalities like callback URL handling, checking payment status, cancelling payment, and refunding payment.
+
+    ```php
+    require_once __DIR__ . '/vendor/autoload.php';
+    
+    use Dotenv\Dotenv;
+    use FirstIraqiBank\FIBPaymentSDK\Services\FIBAuthIntegrationService;
+    use FirstIraqiBank\FIBPaymentSDK\Services\FIBPaymentIntegrationService;
+    
+    // Load environment variables from the .env file
+    $dotenv = Dotenv::createImmutable(__DIR__);
+    $dotenv->load();
+    
+    // Initialize the authentication service
+    $authService = new FIBAuthIntegrationService();
+    
+    // Initialize the payment integration service
+    $paymentService = new FIBPaymentIntegrationService($authService);
+    
+    try {
+     // Create a new payment
+    $paymentResponse = $paymentService->createPayment(1000, 'http://localhost/callback', 'Test payment description');
+    
+    // Extract payment details from the response
+    $paymentData = json_decode($paymentResponse->getBody(), true);
+    
+    // Payment details (example using an associative array)
+    $paymentDetails = [
+      'fib_payment_id' => $paymentData['paymentId'],
+      'readable_code' => $paymentData['readableCode'],
+      'personal_app_link' => $paymentData['personalAppLink'],
+      'valid_until' => $paymentData['validUntil'],
+    ];
+
+    // #TODO: Store the payment details in a database or cache. These details will be used for other functionalities such as handling callback URLs, checking payment status, and canceling payments.
+    // Refund Payment
+    // Example: Save payment details in a database or cache for later use
+    // You can use any storage method such as a relational database, NoSQL database, or an in-memory cache
+    
+    // Return the payment details to the end user to proceed with the payment
+    return $paymentDetails;
+    }  catch (Exception $e) {
+        echo "Error: " . $e->getMessage();
+    }
+    ```
+
+- Storing Payment Details: Once you receive the payment details from the createPayment method, you can store them in a database or a cache.
+  This allows you to retrieve and use these details for further actions such as checking the payment status, processing refunds, or handling payment callbacks.
+
+    - Database: Save the payment details in a relational database (e.g., MySQL, PostgreSQL) or a NoSQL database (e.g.,
+  MongoDB).
+    - Cache: Use an in-memory cache (e.g., Redis, Memcached) to store the payment details for quick access.
+
+- Returning Payment Details
+After storing the payment details, return them to the end user.
+  The returned details include:
+
+    - fib_payment_id: The unique identifier for the payment.
+    - readable_code: A readable code for the payment.
+    - personal_app_link: A link for the end user to proceed with the payment in the personal app.
+    - valid_until: The expiration time for the payment.
+
+By following these steps, you ensure that the payment details are securely stored and easily accessible for further processing.
+
+
+#### Checking the Payment Status
+To check the status of a payment, use the checkPaymentStatus method. This method requires the paymentId which was returned when the payment was created.
 
 ```php
-    require 'vendor/autoload.php';
-    
-    use FIBPayment\FIBPayment;
-    
-    $apiUrl = getenv('FIB_BASE_URL');
-    $apiKey = getenv('FIB_API_KEY');
-    
-    $paymentSDK = new FIBPayment($apiUrl, $apiKey);
-    
-    // Create a payment
-    $paymentResponse = $paymentSDK->createPayment(100, 'IQD', 'Test Payment', 'https://example.com/callback');
-    
-    // Check payment status
-    $paymentStatus = $paymentSDK->getPaymentStatus($paymentResponse['payment_id']);
-    
-    print_r($paymentStatus);
+    $paymentStatus = $paymentService->checkPaymentStatus($paymentId);
+    echo "Payment Status: " . $paymentStatus;
+```
+#### Refunding a Payment
+To refund a payment, use the refund method. This method also requires the paymentId.
+
+```php
+    $refundResponse = $paymentService->refund($paymentId);
 ```
 
-### Documentation
+#### Cancelling a Payment
+To cancel a payment, use the cancel method. This method requires the paymentId.
 
-For more information on how to use the SDK, refer to the full documentation.
+```php
+    $cancelResponse = $paymentService->cancel($paymentId);
+```
+
+#### Handling Payment Callbacks
+To handle payment callbacks, ensure your application has a POST API or URL that FIB can call to notify your application about payment status updates.
+
+Callback URL Requirements
+Your callback URL should be able to handle POST requests with a request body containing two properties:
+
+id: This represents the payment ID associated with the callback.
+Status: This indicates the current status of the payment. Refer to the "Check Payment Status" section of this documentation for more details. The status returned should mirror the data structure returned by the check status endpoint.
+
+```php
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as Response;
+
+// Define your callback endpoint
+$app->post('/callback', function (Request $request, Response $response) {
+    $payload = $request->getParsedBody();
+
+    // Validate incoming payload
+    $paymentId = $payload['id'] ?? null;
+    $status = $payload['status'] ?? null;
+
+    if (!$paymentId || !$status) {
+        return $response->withStatus(400)->withJson([
+            'error' => 'Invalid callback payload',
+        ]);
+    }
+
+    // Process the callback
+    try {
+        $paymentService->handleCallback($paymentId, $status);
+        //TODO: Implement your callback handling logic here
+
+        return $response->withJson([
+            'message' => 'Callback processed successfully',
+        ]);
+    } catch (Exception $e) {
+        return $response->withStatus(500)->withJson([
+            'error' => 'Failed to process callback: ' . $e->getMessage(),
+        ]);
+    }
+});
+
+```
+##### Notes
+-  /callback with your actual endpoint URL.
+- Ensure your callback endpoint is accessible to FIB and handles errors gracefully.
+- Implement the handleCallback method in your FIBPaymentIntegrationService class to handle the payment status update internally.
+
+### FIB Payment Documentation
+
+For comprehensive details on FIB Online Payment, please refer to the [full documentation](https://documenter.getpostman.com/view/18377702/UVCB93tc).
+
 
 ### Testing
 
@@ -72,7 +199,8 @@ Contributions are welcome! Please read `CONTRIBUTING.md` for details on our code
 
 ### License
 
-This project is licensed under the MIT License - see the `LICENSE.md` file for details.
+This project is licensed under the MIT License. See the [LICENSE.md](LICENSE.md) file for details.
+
 
 ### Support
 
