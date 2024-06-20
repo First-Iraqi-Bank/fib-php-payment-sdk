@@ -8,8 +8,10 @@
     'currency' => $_ENV['FIB_CURRENCY'] ?? 'IQD',
     'callback' => $_ENV['FIB_CALLBACK_URL'],
     'auth_account' => $_ENV['FIB_ACCOUNT'] ?? 'default',
-    'default' => [
-      'client_id' => $_ENV['FIB_CLIENT_ID'],
-      'secret' => $_ENV['FIB_CLIENT_SECRET'],
+    'clients' => [
+      'default' => [
+        'client_id' => $_ENV['FIB_CLIENT_ID'],
+        'secret' => $_ENV['FIB_CLIENT_SECRET'],
+      ],
     ],
   ];
