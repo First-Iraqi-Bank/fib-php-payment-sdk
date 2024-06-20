@@ -1,6 +1,6 @@
 <?php
   
-  namespace FirstIraqiBank\FIBPaymentSDK;
+  namespace FirstIraqiBank\FIBPaymentSDK\Services;
   
   use Exception;
   use GuzzleHttp\Client;
@@ -9,7 +9,7 @@
   
   class FIBAuthIntegrationService
   {
-    protected string $account;
+    protected array $account;
     protected array $config;
     protected Logger $logger;
     protected Client $httpClient;
@@ -17,9 +17,8 @@
     public function __construct()
     {
       // Load configuration
-      $config = require __DIR__ . '/config/fib.php';
-      $this->account = $config['auth_account'] ?? 'default';
-      $this->config = $config;
+      $this->config = require __DIR__ . '/../config/fib.php';
+      $this->account = $this->config['clients'][$this->config['auth_account'] ?? 'default'];
       $this->logger = new Logger('fib');
       $this->logger->pushHandler(new StreamHandler(__DIR__ . '/../logs/fib.log', Logger::ERROR));
       $this->httpClient = new Client();
@@ -35,8 +34,8 @@
         $response = $this->retry(function () {
           return $this->httpClient->post($this->config['login'], [
             'auth' => [
-              $this->config[$this->account]['client_id'],
-              $this->config[$this->account]['secret'],
+              $this->account['client_id'],
+              $this->account['secret'],
             ],
             'form_params' => [
               'grant_type' => $this->config['grant'],
@@ -44,9 +43,7 @@
             'verify' => false,
           ]);
         });
-        
         $responseBody = json_decode($response->getBody(), true);
-        
         if ($response->getStatusCode() === 200 && isset($responseBody['access_token'])) {
           return $responseBody['access_token'];
         }
