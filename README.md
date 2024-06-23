@@ -7,6 +7,9 @@ The FIB Payment SDK provides seamless integration with the FIB payment system, e
 
 - **Payment Transactions**: Enable users to make payments securely through the FIB payment system, handling transactions effortlessly within your application.
 - **Refund Processing**: Process refunds securely through the FIB payment system, managing transactions efficiently within your application.
+- **Payment Status Checking**: Check the status of payments to ensure accurate transaction tracking.
+- **Payment Cancellation**: Cancel payments securely through the FIB payment system, providing flexibility and control over payment transactions.
+
 
 ## Installation
 
