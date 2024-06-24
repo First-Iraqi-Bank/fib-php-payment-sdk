@@ -19,6 +19,43 @@ To integrate the SDK into your project, install it via Composer:
 composer require First-Iraqi-Bank/fib-php-payment-sdk
 ```
 
+## Alternative Installation (Without Composer)
+If your project prefers not to use Composer for dependency management, you can manually include the FIB Payment SDK by following these steps:
+
+- Clone the Repository: Clone the FIB Payment SDK repository directly into your project directory or any preferred 
+  location: 
+
+```bash
+ git clone https://github.com/First-Iraqi-Bank/fib-php-payment-sdk.git
+```
+
+- Include in Your Project:
+Copy or move the cloned fib-php-payment-sdk directory into your project structure. You can place it wherever it suits your project best.
+
+- Autoloading (if applicable):
+If your project uses autoloading, ensure that the src directory of the SDK is included in your autoloader configuration. For example, if using PSR-4 autoloading, you might add the following to your composer.json or equivalent autoloading setup:
+
+```json
+{
+    "autoload": {
+        "psr-4": {
+            "FIB\\PaymentSDK\\": "path/to/fib-php-payment-sdk/src"
+        }
+    }
+}
+```
+
+- Usage: After including the SDK in your project, you can use its classes and functionalities directly in your PHP 
+  files.
+
+### Notes
+- Ensure that the SDK repository URL (https://github.com/First-Iraqi-Bank/fib-php-payment-sdk.git) is correct and 
+accessible.
+- Manually managing dependencies may require additional effort to keep the SDK updated with the latest changes and 
+  fixes.
+- Consider using Composer for managing dependencies whenever possible, as it simplifies dependency management and 
+  ensures compatibility with other packages.
+
 ### Configuration
 
 To configure the SDK, you need to set the following environment variables:
