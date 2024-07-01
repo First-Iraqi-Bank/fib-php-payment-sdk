@@ -49,7 +49,7 @@ class FIBPaymentIntegrationService implements FIBPaymentIntegrationServiceInterf
 
                 $response = $this->httpClient->request($method, $url, $options);
 
-                if (in_array($response->getStatusCode(), [200, 201])) {
+                if (in_array($response->getStatusCode(), [200, 201 , 202])) {
                     return $response;
                 }
 
