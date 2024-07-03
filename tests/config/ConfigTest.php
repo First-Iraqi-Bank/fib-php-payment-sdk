@@ -2,21 +2,14 @@
 
 namespace FirstIraqiBank\FIBPaymentSDK\Tests\Config;
 
-use PHPUnit\Framework\TestCase;
+
+use FirstIraqiBank\FIBPaymentSDK\Tests\TestCase;
 
 class ConfigTest extends TestCase
 {
-    protected function setUp(): void
+    public function setUp(): void
     {
-        // Set environment variables for testing purposes
-        $_ENV['FIB_BASE_URL'] = 'https://example.com';
-        $_ENV['FIB_GRANT_TYPE'] = 'client_credentials';
-        $_ENV['FIB_REFUNDABLE_FOR'] = 'P7D';
-        $_ENV['FIB_CURRENCY'] = 'IQD';
-        $_ENV['FIB_CALLBACK_URL'] = 'https://example.com/callback';
-        $_ENV['FIB_ACCOUNT'] = 'default';
-        $_ENV['FIB_CLIENT_ID'] = 'client_id';
-        $_ENV['FIB_CLIENT_SECRET'] = 'client_secret';
+        parent::setUp();
     }
 
     public function test_config_array_has_all_expected_keys()

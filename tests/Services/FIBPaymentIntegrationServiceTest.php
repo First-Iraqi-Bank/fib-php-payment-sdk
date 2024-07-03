@@ -4,23 +4,17 @@ namespace FirstIraqiBank\FIBPaymentSDK\Tests\Services;
 
 use FirstIraqiBank\FIBPaymentSDK\Services\FIBAuthIntegrationService;
 use FirstIraqiBank\FIBPaymentSDK\Services\FIBPaymentIntegrationService;
-use PHPUnit\Framework\TestCase;
+
+use FirstIraqiBank\FIBPaymentSDK\Tests\TestCase;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use ReflectionClass;
 
 class FIBPaymentIntegrationServiceTest extends TestCase
 {
-    protected function setUp(): void
+    public function setUp(): void
     {
-        $_ENV['FIB_BASE_URL'] = 'https://example.com';
-        $_ENV['FIB_GRANT_TYPE'] = 'client_credentials';
-        $_ENV['FIB_REFUNDABLE_FOR'] = 'P7D';
-        $_ENV['FIB_CURRENCY'] = 'IQD';
-        $_ENV['FIB_CALLBACK_URL'] = 'https://example.com/callback';
-        $_ENV['FIB_ACCOUNT'] = 'default';
-        $_ENV['FIB_CLIENT_ID'] = 'client_id';
-        $_ENV['FIB_CLIENT_SECRET'] = 'client_secret';
+        parent::setUp();
     }
 
     private function createMockAuthService(): FIBAuthIntegrationService
