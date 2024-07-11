@@ -17,7 +17,8 @@
             "homepage": "https://the-gw.com/"
         }
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
         "php": "^7.4 || ^8.0",
         "ext-json": "*",
@@ -36,7 +37,7 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.0"
+        "phpunit/phpunit": "^9"
     },
     "config": {
         "sort-packages": true
