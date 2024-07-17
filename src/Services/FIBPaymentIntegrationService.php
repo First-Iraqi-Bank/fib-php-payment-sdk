@@ -26,12 +26,17 @@ class FIBPaymentIntegrationService implements FIBPaymentIntegrationServiceInterf
     }
 
     /**
+     * Makes a request to the given URL with the specified method and data.
+     *
+     * @param string $method
+     * @param string $url
+     * @param array $data
+     * @return array|null|ResponseInterface
      * @throws Exception
      */
-    private function request(string $method, string $url, array $data = []): ?ResponseInterface
+    private function request(string $method, string $url, array $data = [])
     {
         $token = $this->fibAuthIntegrationService->getToken();
-
 
         for ($attempt = 0; $attempt < $this->maxAttempts; $attempt++) {
             try {
@@ -41,6 +46,7 @@ class FIBPaymentIntegrationService implements FIBPaymentIntegrationServiceInterf
                         'Content-Type' => 'application/json',
                     ],
                     'verify' => false,
+                    'http_errors' => false
                 ];
 
                 if ($method === 'POST') {
@@ -49,8 +55,15 @@ class FIBPaymentIntegrationService implements FIBPaymentIntegrationServiceInterf
 
                 $response = $this->httpClient->request($method, $url, $options);
 
-                if (in_array($response->getStatusCode(), [200, 201 , 202 , 204])) {
+                if (in_array($response->getStatusCode(), [200, 201, 202, 204])) {
                     return $response;
+                }
+
+                if (in_array($response->getStatusCode(), [400, 402 , 406])) {
+                    return [
+                        'status_code' => $response->getStatusCode(),
+                        'message' => json_decode($response->getBody()->getContents(), true)
+                    ];
                 }
 
                 usleep($this->retryDelay * 1000); // Delay in milliseconds before retrying
@@ -65,45 +78,78 @@ class FIBPaymentIntegrationService implements FIBPaymentIntegrationServiceInterf
     }
 
     /**
+     * Makes a GET request to the given URL.
+     *
+     * @param string $url
+     * @return array|null
      * @throws Exception
      */
-    private function getRequest(string $url)
+    private function getRequest(string $url): ?array
     {
         $response = $this->request('GET', $url);
         return $response ? json_decode($response->getBody()->getContents(), true) : null;
     }
 
     /**
+     * Makes a POST request to the given URL with the specified data.
+     *
+     * @param string $url
+     * @param array $data
+     * @return array|null|ResponseInterface
      * @throws Exception
      */
-    private function postRequest(string $url, array $data = []): ?ResponseInterface
+    private function postRequest(string $url, array $data = [])
     {
         return $this->request('POST', $url, $data);
     }
 
     /**
+     * Creates a payment with the given amount, callback URL, and description.
+     *
+     * @param int $amount
+     * @param mixed $callback
+     * @param mixed $description
+     * @return array|null|ResponseInterface
      * @throws Exception
      */
-    public function createPayment(int $amount, $callback = null, $description = null): ?ResponseInterface
+    public function createPayment(int $amount, $callback = null, $description = null)
     {
         $data = $this->getPaymentData($amount, $callback, $description);
         return $this->postRequest("{$this->baseUrl}/payments", $data);
     }
 
     /**
+     * Checks the status of a payment with the given ID.
+     *
+     * @param mixed $paymentId
+     * @return array|null
      * @throws Exception
      */
-    public function checkPaymentStatus($paymentId)
+    public function checkPaymentStatus($paymentId): ?array
     {
-        return $this->getRequest("{$this->baseUrl}/payments/{$paymentId}/status")['status'];
+        return $this->getRequest("{$this->baseUrl}/payments/{$paymentId}/status");
     }
 
+    /**
+     * Handles the callback for a payment.
+     *
+     * @param string $paymentId
+     * @param string $status
+     */
     public function handleCallback(string $paymentId, string $status): void
     {
         // TODO: handle the callback implementation
     }
 
-    public function getPaymentData(int $amount, string $callback = null, $description = null): array
+    /**
+     * Gets the payment data with the given amount, callback URL, and description.
+     *
+     * @param int $amount
+     * @param mixed $callback
+     * @param mixed $description
+     * @return array
+     */
+    public function getPaymentData(int $amount, $callback = null, $description = null): array
     {
         return [
             'monetaryValue' => [
@@ -117,19 +163,26 @@ class FIBPaymentIntegrationService implements FIBPaymentIntegrationServiceInterf
     }
 
     /**
+     * Refunds a payment with the given ID.
+     *
+     * @param string $paymentId
+     * @return array|null|ResponseInterface
      * @throws Exception
      */
-    public function refund(string $paymentId): ?ResponseInterface
+    public function refund(string $paymentId)
     {
         return $this->postRequest("{$this->baseUrl}/payments/{$paymentId}/refund");
     }
 
     /**
+     * Cancels a payment with the given ID.
+     *
+     * @param string $paymentId
+     * @return array|null|ResponseInterface
      * @throws Exception
      */
-    public function cancel(string $paymentId): ?ResponseInterface
+    public function cancel(string $paymentId)
     {
         return $this->postRequest("{$this->baseUrl}/payments/{$paymentId}/cancel");
     }
 }
-
