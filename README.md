@@ -3,6 +3,32 @@
 
 The FIB Payment SDK provides seamless integration with the FIB payment system, empowering developers to streamline payment transactions and facilitate secure refunds within their applications.
 
+Here's the updated README file with links to the list of contents at the start:
+
+# FIB Payment SDK
+
+**Table of Contents**
+- [Features](#features)
+- [Installation](#installation)
+  - [Composer Installation](#composer-installation)
+  - [Alternative Installation (Without Composer)](#alternative-installation-without-composer)
+- [Configuration](#configuration)
+- [Usage](#usage)
+  - [Creating a Payment](#creating-a-payment)
+  - [Checking Payment Status](#checking-payment-status)
+  - [Refunding a Payment](#refunding-a-payment)
+  - [Cancelling a Payment](#cancelling-a-payment)
+  - [Handling Payment Callbacks](#handling-payment-callbacks)
+- [FIB Payment Documentation](#fib-payment-documentation)
+- [Testing](#testing)
+- [Contributing](#contributing)
+- [License](#license)
+- [Support](#support)
+- [Acknowledgments](#acknowledgments)
+- [Versioning](#versioning)
+- [FAQ](#faq)
+
+
 ## Features
 
 - **Payment Transactions**: Enable users to make payments securely through the FIB payment system, handling transactions effortlessly within your application.
@@ -88,49 +114,51 @@ Make sure you have installed all required dependencies using Composer:
 #### Create a Payment Example Usage
 - To create a payment, use the createPayment method. This method will return the payment details which you can store in a database or cache for later use in other functionalities like callback URL handling, checking payment status, cancelling payment, and refunding payment.
 
-    ```php
-    require_once __DIR__ . '/vendor/autoload.php';
+```php
+      <?php
+    require_once __DIR__ . '/../vendor/autoload.php';
     
     use Dotenv\Dotenv;
     use FirstIraqiBank\FIBPaymentSDK\Services\FIBAuthIntegrationService;
     use FirstIraqiBank\FIBPaymentSDK\Services\FIBPaymentIntegrationService;
-    
-    // Load environment variables from the .env file
-    $dotenv = Dotenv::createImmutable(__DIR__);
-    $dotenv->load();
-    
-    // Initialize the authentication service
-    $authService = new FIBAuthIntegrationService();
-    
-    // Initialize the payment integration service
-    $paymentService = new FIBPaymentIntegrationService($authService);
-    
-    try {
-     // Create a new payment
-    $paymentResponse = $paymentService->createPayment(1000, 'http://localhost/callback', 'Test payment description');
-    
-    // Extract payment details from the response
-    $paymentData = json_decode($paymentResponse->getBody(), true);
-    
-    // Payment details (example using an associative array)
-    $paymentDetails = [
-      'fib_payment_id' => $paymentData['paymentId'],
-      'readable_code' => $paymentData['readableCode'],
-      'personal_app_link' => $paymentData['personalAppLink'],
-      'valid_until' => $paymentData['validUntil'],
-    ];
+  
+  // Load environment variables from the .env file
+  $dotenv = Dotenv::createImmutable(__DIR__.'/..');
+  $dotenv->load();
+  
+  // Function to create a payment and return its ID
+  function createPayment(): string
+  {
+  // Initialize the authentication service
+  $authService = new FIBAuthIntegrationService();
+  
+      // Initialize the payment integration service
+      $paymentService = new FIBPaymentIntegrationService($authService);
+      
+      try {
+        // Create a new payment
+        $paymentResponse = $paymentService->createPayment(1000, 'http://localhost/callback', 'Test payment description');
+        $paymentData = json_decode($paymentResponse->getBody(), true);
+        
+         // This should typically be saved in a database or cache for real implementations
+        // Payment details (example using an associative array)
+        //    $paymentData = [
+        //      'fib_payment_id' => $paymentData['paymentId'],
+        //      'readable_code' => $paymentData['readableCode'],
+        //      'personal_app_link' => $paymentData['personalAppLink'],
+        //      'valid_until' => $paymentData['validUntil'],
+        //    ];
+        // Example: $databaseService->storePaymentDetails($paymentData);
+        
+        // Return the payment ID
+        return $paymentData['paymentId'];
+      } catch (Exception $e) {
+        // Handle any errors
+        throw new Exception("Error creating payment: " . $e->getMessage());
+      }
+  }
 
-    // #TODO: Store the payment details in a database or cache. These details will be used for other functionalities such as handling callback URLs, checking payment status, and canceling payments.
-    // Refund Payment
-    // Example: Save payment details in a database or cache for later use
-    // You can use any storage method such as a relational database, NoSQL database, or an in-memory cache
-    
-    // Return the payment details to the end user to proceed with the payment
-    return $paymentDetails;
-    }  catch (Exception $e) {
-        echo "Error: " . $e->getMessage();
-    }
-    ```
+```
 
 - Storing Payment Details: Once you receive the payment details from the createPayment method, you can store them in a database or a cache.
   This allows you to retrieve and use these details for further actions such as checking the payment status, processing refunds, or handling payment callbacks.
@@ -155,21 +183,138 @@ By following these steps, you ensure that the payment details are securely store
 To check the status of a payment, use the checkPaymentStatus method. This method requires the paymentId which was returned when the payment was created.
 
 ```php
-    $paymentStatus = $paymentService->checkPaymentStatus($paymentId);
-    echo "Payment Status: " . $paymentStatus;
+
+<?php
+  require_once __DIR__ . '/../vendor/autoload.php';
+  require_once __DIR__ . '/create_payment.php'; // Include the file with createPayment() function
+  
+  use Dotenv\Dotenv;
+  use FirstIraqiBank\FIBPaymentSDK\Services\FIBAuthIntegrationService;
+  use FirstIraqiBank\FIBPaymentSDK\Services\FIBPaymentIntegrationService;
+
+// Load environment variables from the .env file
+  $dotenv = Dotenv::createImmutable(__DIR__.'/..');
+  $dotenv->load();
+  
+  try {
+    // Get the payment ID
+      $paymentId = retrievePaymentId();    
+    // This $paymentId should be retrieved from your database or cache in real implementations
+    // Example: $paymentId = $databaseService->retrievePaymentId();
+    
+    // Initialize the authentication service
+    $authService = new FIBAuthIntegrationService();
+    
+    // Initialize the payment integration service
+    $paymentService = new FIBPaymentIntegrationService($authService);
+    
+    // Check Payment Status
+    $response = $paymentService->checkPaymentStatus($paymentId);
+    echo "Payment Status: " . $response['status'] ?? null . PHP_EOL;
+    
+    // Example: Store payment details in a database or cache for real implementations
+    // $databaseService->storePaymentDetails($paymentDetails);
+    
+  } catch (Exception $e) {
+    echo "Error checking payment status: " . $e->getMessage() . PHP_EOL;
+  }
+
+
 ```
 #### Refunding a Payment
 To refund a payment, use the refund method. This method also requires the paymentId.
 
 ```php
-    $refundResponse = $paymentService->refund($paymentId);
+
+<?php
+  require_once __DIR__ . '/../vendor/autoload.php';
+  require_once __DIR__ . '/create_payment.php'; // Include the file with createPayment() function
+  
+  use Dotenv\Dotenv;
+  use FirstIraqiBank\FIBPaymentSDK\Services\FIBAuthIntegrationService;
+  use FirstIraqiBank\FIBPaymentSDK\Services\FIBPaymentIntegrationService;
+
+// Load environment variables from the .env file
+  $dotenv = Dotenv::createImmutable(__DIR__.'/..');
+  $dotenv->load();
+  
+  try {
+    // Get the payment ID
+    $paymentId = retrievePaymentId();
+    
+    // This $paymentId should be retrieved from your database or cache in real implementations
+    // Example: $paymentId = $databaseService->retrievePaymentId();
+    
+    // Initialize the authentication service
+    $authService = new FIBAuthIntegrationService();
+    
+    // Initialize the payment integration service
+    $paymentService = new FIBPaymentIntegrationService($authService);
+    
+    // Refund Payment
+    $response = $paymentService->refund($paymentId);
+    echo "Refund Payment Status: " . $response['status_code'] . PHP_EOL;
+
+    
+    // Example: update payment details in a database or cache for real implementations
+    // $databaseService->updatePaymentDetails($paymentDetails);
+    
+  } catch (Exception $e) {
+    echo "Error Refunding payment: " . $e->getMessage() . PHP_EOL;
+  }
+
+
 ```
 
 #### Cancelling a Payment
 To cancel a payment, use the cancel method. This method requires the paymentId.
 
 ```php
-    $cancelResponse = $paymentService->cancel($paymentId);
+
+<?php
+  require_once __DIR__ . '/../vendor/autoload.php';
+  require_once __DIR__ . '/create_payment.php'; // Include the file with createPayment() function
+  
+  use Dotenv\Dotenv;
+  use FirstIraqiBank\FIBPaymentSDK\Services\FIBAuthIntegrationService;
+  use FirstIraqiBank\FIBPaymentSDK\Services\FIBPaymentIntegrationService;
+
+// Load environment variables from the .env file
+  $dotenv = Dotenv::createImmutable(__DIR__.'/..');
+  $dotenv->load();
+  
+  try {
+    // Get the payment ID
+    $paymentId = retrievePaymentId();
+    
+    // This $paymentId should be retrieved from your database or cache in real implementations
+    // Example: $paymentId = $databaseService->retrievePaymentId();
+    
+    // Initialize the authentication service
+    $authService = new FIBAuthIntegrationService();
+    
+    // Initialize the payment integration service
+    $paymentService = new FIBPaymentIntegrationService($authService);
+    
+    // cancel Payment
+    $response = $paymentService->cancel($paymentId);
+    // Check if the cancellation was successful
+    if (in_array($response->getStatusCode(), [200, 201, 202, 204])) {
+      echo "Cancel Payment Status: Successful\n";
+    } else {
+      echo "Cancel Payment Status: Failed with status code " . $response->getStatusCode() . "\n";
+    }
+    
+    
+    // Example: update payment details in a database or cache for real implementations
+    // $databaseService->updatePaymentDetails($paymentDetails);
+    
+  } catch (Exception $e) {
+    echo "Error Refunding payment: " . $e->getMessage() . PHP_EOL;
+  }
+
+
+
 ```
 
 #### Handling Payment Callbacks
