@@ -32,7 +32,6 @@
       echo "Cancel Payment Status: Failed with status code " . $response->getStatusCode() . "\n";
     }
     
-    
     // Example: update payment details in a database or cache for real implementations
     // $databaseService->updatePaymentDetails($paymentDetails);
     
