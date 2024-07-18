@@ -37,32 +37,27 @@ jobs:
         run: composer install --no-progress --no-suggest --prefer-dist
 
       - name: Bump version
-        if: ${{ github.event.inputs.version_type != 'dev' }}
+        id: bump_version
         run: |
           CURRENT_VERSION=$(composer show -s | grep "versions" | head -n 1 | awk '{print $2}')
-          echo "Current version: $CURRENT_VERSION"
           VERSION_TYPE=${{ github.event.inputs.version_type }}
-          IFS='.' read -r -a version_parts <<< "$CURRENT_VERSION"
-          echo "Version parts: ${version_parts[@]}"
-          major=${version_parts[0]}
-          minor=${version_parts[1]}
-          patch=${version_parts[2]}
-          if [[ "$VERSION_TYPE" == "patch" ]]; then
-            patch=$((patch + 1))
-          elif [[ "$VERSION_TYPE" == "minor" ]]; then
-            minor=$((minor + 1))
-            patch=0
-          elif [[ "$VERSION_TYPE" == "major" ]]; then
-            major=$((major + 1))
-            minor=0
-            patch=0
-          else
-            echo "Unsupported version type specified."
-            exit 1
-          fi
-          NEW_VERSION="$major.$minor.$patch"
+          NEW_VERSION=$(echo "$CURRENT_VERSION" | awk -F. -v type="$VERSION_TYPE" '{
+            if (type == "patch") {
+              $3++
+            } else if (type == "minor") {
+              $2++
+              $3=0
+            } else if (type == "major") {
+              $1++
+              $2=0
+              $3=0
+            }
+            print $1"."$2"."$3
+          }')
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-          echo "Computed new version: $NEW_VERSION"
+          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_STEP_SUMMARY
+          echo "after applying $VERSION_TYPE" >> $GITHUB_STEP_SUMMARY
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_STEP_SUMMARY
 
       - name: Debug NEW_VERSION
         run: echo "NEW_VERSION is ${{ env.NEW_VERSION }}"
