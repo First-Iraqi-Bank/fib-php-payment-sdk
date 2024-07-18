@@ -92,18 +92,6 @@ jobs:
         if: ${{ github.event.inputs.version_type != 'dev' }}
         run: composer install --no-dev --optimize-autoloader
 
-      - name: Publish on Packagist
-        if: ${{ github.event.inputs.version_type != 'dev' }}
-        env:
-          COMPOSER_AUTH: '{"http-basic":{"composer.example.com":{"username":"${{ secrets.COMPOSER_USERNAME }}","password":"${{ secrets.COMPOSER_PASSWORD }}"}}}'
-        run: |
-          VERSION_TYPE=${{ github.event.inputs.version_type }}
-          if [[ "$VERSION_TYPE" == "dev" ]]; then
-            composer publish --access public --no-interaction --stability dev
-          else
-            composer publish --access public --no-interaction
-          fi
-
       - name: Push new Git commit and tag
         if: ${{ github.event.inputs.version_type != 'dev' }}
         run: |
