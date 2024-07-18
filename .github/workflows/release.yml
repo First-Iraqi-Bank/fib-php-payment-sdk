@@ -39,13 +39,15 @@ jobs:
       - name: Bump version
         id: bump_version
         run: |
-          CURRENT_VERSION=$(composer show -s | grep "versions" | head -n 1 | awk '{print $2}')
+          CURRENT_VERSION=$(jq -r '.version' composer.json)
           echo "Current version: $CURRENT_VERSION"
           VERSION_TYPE=${{ github.event.inputs.version_type }}
+
           IFS='.' read -r -a version_parts <<< "$CURRENT_VERSION"
           major=${version_parts[0]}
           minor=${version_parts[1]}
           patch=${version_parts[2]}
+
           if [[ "$VERSION_TYPE" == "patch" ]]; then
             patch=$((patch + 1))
           elif [[ "$VERSION_TYPE" == "minor" ]]; then
@@ -59,6 +61,7 @@ jobs:
             echo "Unsupported version type specified."
             exit 1
           fi
+
           NEW_VERSION="$major.$minor.$patch"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_STEP_SUMMARY
@@ -67,7 +70,7 @@ jobs:
 
       - name: Update composer.json
         run: |
-          jq --arg version "${{ env.NEW_VERSION }}" '.version = $version' composer.json > tmp.json && mv tmp.json composer.json
+          jq --arg version "$NEW_VERSION" '.version = $version' composer.json > tmp.json && mv tmp.json composer.json
           git add composer.json
           git commit -m "Bump version to ${{ env.NEW_VERSION }}"
 
