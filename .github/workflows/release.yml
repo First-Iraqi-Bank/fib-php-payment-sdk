@@ -69,14 +69,15 @@ jobs:
       - name: Update composer.json
         if: ${{ github.event.inputs.version_type != 'dev' }}
         run: |
-          composer config version ${{ env.NEW_VERSION }}
+          composer config version ${NEW_VERSION}
           git add composer.json
-          git commit -m "Bump version to ${{ env.NEW_VERSION }}"
+          git add composer.lock
+          git commit -m "Bump version to ${NEW_VERSION}"
 
       - name: Create Git tag
         if: ${{ github.event.inputs.version_type != 'dev' }}
         run: |
-          git tag v${{ env.NEW_VERSION }}
+          git tag v${NEW_VERSION}
 
       - name: Build
         if: ${{ github.event.inputs.version_type != 'dev' }}
@@ -98,4 +99,4 @@ jobs:
         if: ${{ github.event.inputs.version_type != 'dev' }}
         run: |
           git push origin main
-          git push origin v${{ env.NEW_VERSION }}
+          git push origin v${NEW_VERSION}
