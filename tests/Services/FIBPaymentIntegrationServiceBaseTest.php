@@ -5,12 +5,12 @@ namespace FirstIraqiBank\FIBPaymentSDK\Tests\Services;
 use FirstIraqiBank\FIBPaymentSDK\Services\FIBAuthIntegrationService;
 use FirstIraqiBank\FIBPaymentSDK\Services\FIBPaymentIntegrationService;
 
-use FirstIraqiBank\FIBPaymentSDK\Tests\TestCase;
+use FirstIraqiBank\FIBPaymentSDK\Tests\BaseTestCase;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use ReflectionClass;
 
-class FIBPaymentIntegrationServiceTest extends TestCase
+class FIBPaymentIntegrationServiceBaseTest extends BaseTestCase
 {
     public function setUp(): void
     {
@@ -51,18 +51,21 @@ class FIBPaymentIntegrationServiceTest extends TestCase
 
         $this->assertEquals(201, $response->getStatusCode());
     }
+  
+  public function test_check_payment_status()
+  {
+    $mockAuth = $this->createMockAuthService();
+    $mockClient = $this->createMockHttpClient(200, ['status' => 'paid']);
+    
+    $service = new FIBPaymentIntegrationService($mockAuth);
+    $this->setPrivateProperty($service, 'httpClient', $mockClient);
+    
+    $response = $service->checkPaymentStatus('payment_id');
+    $status = $response['status'] ?? null;
+    
+    $this->assertEquals('paid', $status);
+  }
 
-    public function test_check_payment_status()
-    {
-        $mockAuth = $this->createMockAuthService();
-        $mockClient = $this->createMockHttpClient(200, ['status' => 'paid']);
-
-        $service = new FIBPaymentIntegrationService($mockAuth);
-        $this->setPrivateProperty($service, 'httpClient', $mockClient);
-
-        $status = $service->checkPaymentStatus('payment_id');
-        $this->assertEquals('paid', $status);
-    }
 
     public function test_refund()
     {

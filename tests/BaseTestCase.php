@@ -2,7 +2,10 @@
 
 namespace FirstIraqiBank\FIBPaymentSDK\Tests;
 
-class TestCase extends \PHPUnit\Framework\TestCase
+use \PHPUnit\Framework\TestCase;
+
+
+class BaseTestCase extends TestCase
 {
 
     public function setUp(): void

@@ -375,7 +375,7 @@ For comprehensive details on FIB Online Payment, please refer to the [full docum
 To ensure the SDK functions correctly, run tests using PHPUnit:
 
 ```bash
-phpunit --testdox
+vendor/bin/phpunit --testdox tests
 ```
 
 ### Contributing

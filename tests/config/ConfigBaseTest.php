@@ -2,9 +2,9 @@
   
   namespace FirstIraqiBank\FIBPaymentSDK\Tests\Config;
   
-  use FirstIraqiBank\FIBPaymentSDK\Tests\TestCase;
+  use FirstIraqiBank\FIBPaymentSDK\Tests\BaseTestCase;
   
-  class ConfigTest extends TestCase
+  class ConfigBaseTest extends BaseTestCase
   {
     // Define a constant for "https://"
     private const HTTPS_PREFIX = 'https://';
