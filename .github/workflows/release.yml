@@ -43,6 +43,7 @@ jobs:
           echo "Current version: $CURRENT_VERSION"
           VERSION_TYPE=${{ github.event.inputs.version_type }}
           IFS='.' read -r -a version_parts <<< "$CURRENT_VERSION"
+          echo "Version parts: ${version_parts[@]}"
           major=${version_parts[0]}
           minor=${version_parts[1]}
           patch=${version_parts[2]}
@@ -66,6 +67,13 @@ jobs:
       - name: Debug NEW_VERSION
         run: echo "NEW_VERSION is ${{ env.NEW_VERSION }}"
 
+      - name: Validate NEW_VERSION
+        run: |
+          if [[ ! "${{ env.NEW_VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid NEW_VERSION format: ${{ env.NEW_VERSION }}"
+            exit 1
+          fi
+
       - name: Update composer.json
         if: ${{ github.event.inputs.version_type != 'dev' }}
         run: |
@@ -76,8 +84,7 @@ jobs:
 
       - name: Create Git tag
         if: ${{ github.event.inputs.version_type != 'dev' }}
-        run: |
-          git tag v${{ env.NEW_VERSION }}
+        run: git tag v${{ env.NEW_VERSION }}
 
       - name: Build
         if: ${{ github.event.inputs.version_type != 'dev' }}
