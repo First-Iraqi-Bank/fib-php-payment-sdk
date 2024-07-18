@@ -88,7 +88,19 @@ jobs:
 
       - name: Publish on Packagist
         env:
-          COMPOSER_AUTH: '{"http-basic":{"composer.example.com":{"username":"${{ secrets.COMPOSER_USERNAME }}","password":"${{ secrets.COMPOSER_PASSWORD }}"}}}'
+          COMPOSER_AUTH: |
+            {
+              "http-basic": {
+                "packagist.org": {
+                  "username": "${{ secrets.COMPOSER_USERNAME }}",
+                  "password": "${{ secrets.PACKAGIST_TOKEN }}"
+                },
+                "github.com": {
+                  "username": "First-Iraqi-Bank",
+                  "password": "${{ secrets.FIB_PAT }}"
+                }
+              }
+            }
         run: |
           VERSION_TYPE=${{ github.event.inputs.version_type }}
           if [[ "$VERSION_TYPE" == "dev" ]]; then
