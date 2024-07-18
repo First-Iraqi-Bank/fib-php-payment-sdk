@@ -20,7 +20,7 @@
     // Initialize the authentication service
     $authService = new FIBAuthIntegrationService();
     
-    // Initialize the payment integration service
+    // Initialize the payment integration service.
     $paymentService = new FIBPaymentIntegrationService($authService);
     
     // Check Payment Status
