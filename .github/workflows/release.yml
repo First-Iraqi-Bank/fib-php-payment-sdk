@@ -40,6 +40,7 @@ jobs:
         if: ${{ github.event.inputs.version_type != 'dev' }}
         run: |
           CURRENT_VERSION=$(composer show -s | grep "versions" | head -n 1 | awk '{print $2}')
+          echo "Current version: $CURRENT_VERSION"
           VERSION_TYPE=${{ github.event.inputs.version_type }}
           if [[ "$VERSION_TYPE" == "patch" ]]; then
             NEW_VERSION=$(php -r "echo preg_replace('/([0-9]+)\.([0-9]+)\.([0-9]+)/e', '\\1.\\2.\\3+1', '$CURRENT_VERSION');")
@@ -53,6 +54,9 @@ jobs:
           fi
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           echo "Computed new version: $NEW_VERSION"
+
+      - name: Debug NEW_VERSION
+        run: echo "NEW_VERSION is ${{ env.NEW_VERSION }}"
 
       - name: Update composer.json
         if: ${{ github.event.inputs.version_type != 'dev' }}
