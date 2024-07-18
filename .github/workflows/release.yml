@@ -58,7 +58,8 @@ jobs:
         if: ${{ github.event.inputs.version_type != 'dev' }}
         run: |
           composer config version ${{ env.NEW_VERSION }}
-          git commit -am "Bump version to ${{ env.NEW_VERSION }}"
+          git add composer.json
+          git commit -m "Bump version to ${{ env.NEW_VERSION }}"
 
       - name: Create Git tag
         if: ${{ github.event.inputs.version_type != 'dev' }}
