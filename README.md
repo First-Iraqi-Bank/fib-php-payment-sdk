@@ -98,15 +98,15 @@ To configure the SDK, you need to set the following environment variables:
 Make sure to set these environment variables appropriately in your application's environment configuration.
 
 
-### Usage the SDK
+### Usage of the SDK
 
 Below is a basic example of how to use the SDK:
 
 #### Ensure Dependencies are Installed:
 Make sure you have installed all required dependencies using Composer:
-    ```bash
+```bash
       composer install
-    ```
+```
 #### Set Up Environment Variables:
    Create a .env file in the root directory of your project and configure the necessary environment variables. Refer to the .env.example file for the required variables.
 
