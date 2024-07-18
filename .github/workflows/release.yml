@@ -46,7 +46,6 @@ jobs:
           major=${version_parts[0]}
           minor=${version_parts[1]}
           patch=${version_parts[2]}
-          echo "Major: $major, Minor: $minor, Patch: $patch"
           if [[ "$VERSION_TYPE" == "patch" ]]; then
             patch=$((patch + 1))
           elif [[ "$VERSION_TYPE" == "minor" ]]; then
@@ -66,34 +65,31 @@ jobs:
           echo "after applying $VERSION_TYPE" >> $GITHUB_STEP_SUMMARY
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_STEP_SUMMARY
 
-      - name: Debug NEW_VERSION
-        run: echo "NEW_VERSION is ${{ env.NEW_VERSION }}"
-
-      - name: Validate NEW_VERSION
-        run: |
-          if [[ ! "${{ env.NEW_VERSION }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Invalid NEW_VERSION format: ${{ env.NEW_VERSION }}"
-            exit 1
-          fi
-
       - name: Update composer.json
-        if: ${{ github.event.inputs.version_type != 'dev' }}
         run: |
           composer config version ${{ env.NEW_VERSION }}
-          git add composer.json
-          git add composer.lock
+          git add composer.json composer.lock
           git commit -m "Bump version to ${{ env.NEW_VERSION }}"
 
       - name: Create Git tag
-        if: ${{ github.event.inputs.version_type != 'dev' }}
-        run: git tag v${{ env.NEW_VERSION }}
-
-      - name: Build
-        if: ${{ github.event.inputs.version_type != 'dev' }}
-        run: composer install --no-dev --optimize-autoloader
+        run: |
+          git tag v${{ env.NEW_VERSION }}
 
       - name: Push new Git commit and tag
-        if: ${{ github.event.inputs.version_type != 'dev' }}
         run: |
           git push origin main
           git push origin v${{ env.NEW_VERSION }}
+
+      - name: Build
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Publish on Packagist
+        env:
+          COMPOSER_AUTH: '{"http-basic":{"composer.example.com":{"username":"${{ secrets.COMPOSER_USERNAME }}","password":"${{ secrets.COMPOSER_PASSWORD }}"}}}'
+        run: |
+          VERSION_TYPE=${{ github.event.inputs.version_type }}
+          if [[ "$VERSION_TYPE" == "dev" ]]; then
+            composer publish --access public --no-interaction --stability dev
+          else
+            composer publish --access public --no-interaction
+          fi
