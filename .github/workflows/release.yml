@@ -36,6 +36,10 @@ jobs:
       - name: Install dependencies
         run: composer install --no-progress --no-suggest --prefer-dist
 
+      - name: Configure Composer for GitHub
+        run: |
+          composer config --global github-oauth.github.com ${{ secrets.FIB_PAT }}
+
       - name: Bump version
         id: bump_version
         run: |
@@ -102,9 +106,6 @@ jobs:
               }
             }
         run: |
-          VERSION_TYPE=${{ github.event.inputs.version_type }}
-          if [[ "$VERSION_TYPE" == "dev" ]]; then
-            composer publish --access public --no-interaction --stability dev
-          else
-            composer publish --access public --no-interaction
-          fi
+          echo "Pushing package version to Packagist..."
+          # Packagist should automatically pick up new tags from your repository
+          # So no specific command is needed here to publish
