@@ -17,7 +17,7 @@
     // This $paymentId should be retrieved from your database or cache in real implementations
     // Example: $paymentId = $databaseService->retrievePaymentId();
     
-    // Initialize the authentication service
+    // Initialize the authentication service.
     $authService = new FIBAuthIntegrationService();
     
     // Initialize the payment integration service.
