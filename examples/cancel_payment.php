@@ -11,7 +11,7 @@
   $dotenv->load();
   
   try {
-    // Get the payment ID
+    // Get the payment ID.
     $paymentId = createPayment();
     
     // This $paymentId should be retrieved from your database or cache in real implementations
