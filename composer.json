@@ -46,6 +46,7 @@
     "sort-packages": true
   },
   "scripts": {
-    "test": "phpunit --testdox tests"
+    "test": "phpunit --testdox --coverage-clover=coverage.xml tests"
   }
+
 }
