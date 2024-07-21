@@ -23,11 +23,8 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config --local --unset-all "http.https://github.com/.extraheader"
-          git config --local --add "http.https://github.com/.extraheader" \
-              "AUTHORIZATION: Basic $(base64 <<< ${{ secrets.FIB_PAT }}:)"
-          git config --global user.email "${GITHUB_ACTOR:-ci-noreply}@github.com"
-          git config --global user.name "${GITHUB_ACTOR:-GitHub Actions}"
+          git config --global user.email "mja.ise.1981@gmail.com"
+          git config --global user.name "MJAISE"
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -36,20 +33,6 @@ jobs:
 
       - name: Install dependencies
         run: composer install --no-progress --no-suggest --prefer-dist
-
-      - name: Configure Composer for GitHub
-        run: |
-          composer config --global github-oauth.github.com ${{ secrets.FIB_PAT }}
-        env:
-          COMPOSER_AUTH: |
-            {
-              "http-basic": {
-                "github.com": {
-                  "username": "First-Iraqi-Bank",
-                  "password": "${{ secrets.FIB_PAT }}"
-                }
-              }
-            }
 
       - name: Bump version
         id: bump_version
@@ -109,10 +92,6 @@ jobs:
                 "packagist.org": {
                   "username": "${{ secrets.COMPOSER_USERNAME }}",
                   "password": "${{ secrets.PACKAGIST_TOKEN }}"
-                },
-                "github.com": {
-                  "username": "First-Iraqi-Bank",
-                  "password": "${{ secrets.FIB_PAT }}"
                 }
               }
             }
