@@ -58,3 +58,6 @@ mix-manifest.json
 # Ignore any other build or distribution files
 /build/
 /dist/
+/coverage/
+/.phpunit.result.cache
+/coverage.xml
