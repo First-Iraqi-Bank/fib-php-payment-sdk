@@ -24,9 +24,6 @@
 # Ignore Node.js modules
 /node_modules
 
-# Ignore PHPUnit XML test results
-/phpunit.xml
-
 # Ignore Laravel Homestead configuration
 Homestead.json
 Homestead.yaml
@@ -58,3 +55,6 @@ mix-manifest.json
 # Ignore any other build or distribution files
 /build/
 /dist/
+/coverage/
+/.phpunit.result.cache
+/coverage.xml

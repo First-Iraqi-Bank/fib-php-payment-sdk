@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="vendor/autoload.php"
+         colors="true">
+
+    <!-- Set test suite information -->
+    <testsuites>
+        <testsuite name="Application Test Suite">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <!-- Configure PHP settings -->
+    <php>
+        <ini name="xdebug.mode" value="coverage"/>
+        <ini name="xdebug.start_with_request" value="yes"/>
+    </php>
+
+    <!-- Enable coverage reporting -->
+    <coverage>
+        <include>
+            <directory>src</directory>
+        </include>
+        <report>
+            <clover>coverage.xml</clover>
+            <html>coverage</html>
+        </report>
+        <!-- Removed min-coverage as it's not supported in the xml configuration -->
+    </coverage>
+</phpunit>
