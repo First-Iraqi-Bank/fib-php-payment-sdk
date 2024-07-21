@@ -40,6 +40,16 @@ jobs:
       - name: Configure Composer for GitHub
         run: |
           composer config --global github-oauth.github.com ${{ secrets.FIB_PAT }}
+        env:
+          COMPOSER_AUTH: |
+            {
+              "http-basic": {
+                "github.com": {
+                  "username": "First-Iraqi-Bank",
+                  "password": "${{ secrets.FIB_PAT }}"
+                }
+              }
+            }
 
       - name: Bump version
         id: bump_version
