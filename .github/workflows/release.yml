@@ -21,6 +21,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Configure Git
+        run: |
+          git config --global user.email "mja.ise.1981@gmail.com"
+          git config --global user.name "MJAISE"
+
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
