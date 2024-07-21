@@ -12,21 +12,26 @@ use GuzzleHttp\Psr7\Response;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use ReflectionClass;
+use ReflectionException;
 
-class FIBAuthIntegrationServiceTest extends BaseTestCase
+class FIBAuthIntegrationServiceBaseTest extends BaseTestCase
 {
     public function setUp(): void
     {
         parent::setUp();
     }
 
-    private function create_mock_http_client(int $statusCode, array $responseBody): Client
+    private function create_mock_http_client(): Client
     {
+        $responseBody = ['access_token' => 'fake-access-token'];
         $mockClient = $this->createMock(Client::class);
-        $mockClient->method('post')->willReturn(new Response($statusCode, [], json_encode($responseBody)));
+        $mockClient->method('post')->willReturn(new Response(200, [], json_encode($responseBody)));
         return $mockClient;
     }
 
+    /**
+     * @throws ReflectionException
+     */
     private function set_private_property($object, string $property, $value): void
     {
         $reflection = new ReflectionClass($object);
@@ -46,7 +51,7 @@ class FIBAuthIntegrationServiceTest extends BaseTestCase
      */
     public function test_get_token_success()
     {
-        $mockClient = $this->create_mock_http_client(200, ['access_token' => 'fake-access-token']);
+        $mockClient = $this->create_mock_http_client();
         $service = new FIBAuthIntegrationService();
         $this->set_private_property($service, 'httpClient', $mockClient);
 
@@ -54,6 +59,9 @@ class FIBAuthIntegrationServiceTest extends BaseTestCase
         $this->assertEquals('fake-access-token', $token);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function test_get_token_exception()
     {
         $mockClient = $this->createMock(Client::class);
@@ -65,6 +73,9 @@ class FIBAuthIntegrationServiceTest extends BaseTestCase
         $service->getToken();
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function test_get_token_empty_response()
     {
         $mockClient = $this->createMock(Client::class);
@@ -76,6 +87,9 @@ class FIBAuthIntegrationServiceTest extends BaseTestCase
         $service->getToken();
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function test_retry_mechanism_failure()
     {
         $mockClient = $this->createMock(Client::class);
@@ -87,6 +101,9 @@ class FIBAuthIntegrationServiceTest extends BaseTestCase
         $service->getToken();
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function test_retry_mechanism_max_attempts_reached()
     {
         $mockClient = $this->createMock(Client::class);
@@ -98,6 +115,9 @@ class FIBAuthIntegrationServiceTest extends BaseTestCase
         $service->getToken();
     }
 
+    /**
+     * @throws ReflectionException
+     */
     public function test_logging_failure()
     {
         $mockClient = $this->createMock(Client::class);
