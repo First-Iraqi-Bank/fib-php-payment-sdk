@@ -90,4 +90,64 @@ class FIBPaymentIntegrationServiceBaseTest extends BaseTestCase
         $response = $service->cancel('payment_id');
         $this->assertEquals(200, $response->getStatusCode());
     }
+
+    public function test_handle_bad_request()
+    {
+        $mockAuth = $this->createMockAuthService();
+        $mockClient = $this->createMockHttpClient(400, ['error' => 'Invalid request']);
+
+        $service = new FIBPaymentIntegrationService($mockAuth);
+        $this->setPrivateProperty($service, 'httpClient', $mockClient);
+
+        $response = $service->createPayment(1000, 'https://example.com/callback', 'Test payment');
+        $statusCode = $response['status_code'] ?? null;
+        $message = $response['message']['error'] ?? null;
+
+        $this->assertEquals(400, $statusCode);
+        $this->assertEquals('Invalid request', $message);
+    }
+
+    public function test_handle_retry_failure()
+    {
+        $mockAuth = $this->createMockAuthService();
+        $mockClient = $this->createMock(Client::class);
+        $mockClient->method('request')->willThrowException(new \GuzzleHttp\Exception\RequestException('Request failed', new \GuzzleHttp\Psr7\Request('POST', 'test')));
+
+        $service = new FIBPaymentIntegrationService($mockAuth);
+        $this->setPrivateProperty($service, 'httpClient', $mockClient);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Failed to POST request due to: Request failed');
+
+        $service->createPayment(1000, 'https://example.com/callback', 'Test payment');
+    }
+
+    public function test_handle_max_attempts_failure()
+    {
+        $mockAuth = $this->createMockAuthService();
+        $mockClient = $this->createMock(Client::class);
+        $mockClient->method('request')->willReturn(new Response(500));
+
+        $service = new FIBPaymentIntegrationService($mockAuth);
+        $this->setPrivateProperty($service, 'httpClient', $mockClient);
+
+        $response = $service->createPayment(1000, 'https://example.com/callback', 'Test payment');
+
+        $this->assertNull($response);
+    }
+
+    public function test_handle_callback()
+    {
+        $mockAuth = $this->createMockAuthService();
+        $mockClient = $this->createMockHttpClient(200, ['status' => 'success']);
+
+        $service = new FIBPaymentIntegrationService($mockAuth);
+        $this->setPrivateProperty($service, 'httpClient', $mockClient);
+
+        $service->handleCallback('payment_id', 'success');
+
+        // Assert that handleCallback does not throw any exception
+        $this->assertTrue(true);
+    }
+
 }
