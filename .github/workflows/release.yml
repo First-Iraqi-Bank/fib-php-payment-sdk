@@ -66,13 +66,8 @@ jobs:
           git add composer.json
           git commit -m "Bump version to ${{ env.NEW_VERSION }}"
 
-      - name: Fetch latest changes
-        run: git fetch origin
-
-      - name: Rebase onto remote branch
-        run: git rebase origin/main
-
-      - name: Push changes to the new branch
+      - name: Push changes and create tag
         run: |
+          git push origin main
           git tag -a "v${{ env.NEW_VERSION }}" -m "Release ${{ env.NEW_VERSION }}"
-          git push origin "v${{ env.NEW_VERSION }}" --force
+          git push origin "v${{ env.NEW_VERSION }}"
