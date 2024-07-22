@@ -22,8 +22,8 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config --global user.email "${{ vars.FIB_BOT_MAIL }}"
-          git config --global user.name "${{ vars.FIB_BOT }}"
+          git config --global user.email "${{ secrets.FIB_BOT_MAIL }}"
+          git config --global user.name "${{ secrets.FIB_BOT }}"
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -73,6 +73,11 @@ jobs:
           BRANCH_NAME="release-${{ env.NEW_VERSION }}"
           git checkout -b $BRANCH_NAME
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+
+      - name: Pull latest changes from remote
+        run: |
+          git fetch origin
+          git pull origin ${{ env.BRANCH_NAME }} || true
 
       - name: Push changes to the new branch
         run: git push origin ${{ env.BRANCH_NAME }}
