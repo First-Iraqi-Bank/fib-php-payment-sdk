@@ -74,6 +74,11 @@ jobs:
           git checkout -b $BRANCH_NAME
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
+      - name: Fetch and rebase
+        run: |
+          git fetch origin
+          git rebase origin/main
+
       - name: Push changes to the new branch
         run: git push origin ${{ env.BRANCH_NAME }}
 
