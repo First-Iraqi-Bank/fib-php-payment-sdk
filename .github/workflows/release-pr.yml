@@ -80,11 +80,11 @@ jobs:
         run: git fetch origin
 
       - name: Rebase onto remote branch
-        run: git rebase origin/release-${{ env.NEW_VERSION }}
+        run: git rebase origin/main
 
       - name: Push changes to the new branch
         run: |
-          git push origin ${{ env.BRANCH_NAME }}
+          git push origin ${{ env.BRANCH_NAME }} --force
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
