@@ -12,6 +12,7 @@ on:
           - patch
           - minor
           - major
+          - dev
 
 jobs:
   publish:
@@ -37,6 +38,7 @@ jobs:
         id: bump_version
         run: |
           CURRENT_VERSION=$(jq -r '.version' composer.json)
+          echo "Current version: $CURRENT_VERSION"
           VERSION_TYPE=${{ github.event.inputs.version_type }}
           IFS='.' read -r -a version_parts <<< "$CURRENT_VERSION"
           major=${version_parts[0]}
@@ -58,14 +60,14 @@ jobs:
           NEW_VERSION="$major.$minor.$patch"
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_STEP_SUMMARY
-          echo "After applying $VERSION_TYPE" >> $GITHUB_STEP_SUMMARY
+          echo "after applying $VERSION_TYPE" >> $GITHUB_STEP_SUMMARY
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_STEP_SUMMARY
 
       - name: Update composer.json
         run: |
           jq --arg version "$NEW_VERSION" '.version = $version' composer.json > tmp.json && mv tmp.json composer.json
           git add composer.json
-          git commit -m "Bump version to $NEW_VERSION"
+          git commit -m "Bump version to ${{ env.NEW_VERSION }}"
 
       - name: Create a new branch
         id: create_branch
@@ -74,10 +76,10 @@ jobs:
           git checkout -b $BRANCH_NAME
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
-      - name: Pull latest changes from remote
+      - name: Fetch and rebase
         run: |
           git fetch origin
-          git pull origin ${{ env.BRANCH_NAME }} || true
+          git rebase origin/main
 
       - name: Push changes to the new branch
         run: git push origin ${{ env.BRANCH_NAME }}
