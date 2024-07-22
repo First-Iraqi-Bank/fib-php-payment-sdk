@@ -77,12 +77,10 @@ jobs:
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
       - name: Fetch latest changes
-        run: |
-          git fetch origin
+        run: git fetch origin
 
-      - name: Rebase onto main
-        run: |
-          git rebase origin/main
+      - name: Rebase onto remote branch
+        run: git rebase origin/release-${{ env.NEW_VERSION }}
 
       - name: Push changes to the new branch
         run: |
