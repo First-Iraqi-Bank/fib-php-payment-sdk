@@ -52,17 +52,16 @@ jobs:
           lines_coverage=$(echo "$coverage" | grep "Lines:" | awk '{print $2}' | sed 's/%//')
           functions_coverage=$(echo "$coverage" | grep "Functions:" | awk '{print $2}' | sed 's/%//')
           classes_coverage=$(echo "$coverage" | grep "Classes:" | awk '{print $2}' | sed 's/%//')
-          branches_coverage=$(echo "$coverage" | grep "Branches:" | awk '{print $2}' | sed 's/%//')
 
+          # Output the coverage percentages
           echo "Lines coverage: $lines_coverage%"
           echo "Functions coverage: $functions_coverage%"
           echo "Classes coverage: $classes_coverage%"
-          echo "Branches coverage: $branches_coverage%"
 
-#          # Check if any coverage metric is below the threshold
-#          if [ "$lines_coverage" -lt 70 ] || [ "$functions_coverage" -lt 70 ] || [ "$classes_coverage" -lt 70 ] || [ "$branches_coverage" -lt 70 ]; then
-#            echo "Coverage is below the threshold of 70%."
-#            exit 1
-#          else
-#            echo "Coverage meets the minimum threshold."
-#          fi
+          # Check if any coverage metric is below the threshold
+          if [ "$lines_coverage" -lt 70 ] || [ "$functions_coverage" -lt 70 ] || [ "$classes_coverage" -lt 70 ]; then
+            echo "Coverage is below the threshold of 70%."
+            exit 1
+          else
+            echo "Coverage meets the minimum threshold."
+          fi
