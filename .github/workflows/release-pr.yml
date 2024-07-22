@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          ref: main  # Ensure we start from the main branch
 
       - name: Configure Git
         run: |
@@ -74,13 +76,17 @@ jobs:
           git checkout -b $BRANCH_NAME
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
-      - name: Fetch and rebase
+      - name: Fetch latest changes
         run: |
           git fetch origin
+
+      - name: Rebase onto main
+        run: |
           git rebase origin/main
 
       - name: Push changes to the new branch
-        run: git push origin ${{ env.BRANCH_NAME }}
+        run: |
+          git push origin ${{ env.BRANCH_NAME }}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
