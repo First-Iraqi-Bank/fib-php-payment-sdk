@@ -30,6 +30,7 @@
         'refundable_for',
         'currency',
         'callback',
+        'redirectUri',
         'auth_account',
         'clients',
       ];

@@ -91,6 +91,7 @@ To configure the SDK, you need to set the following environment variables:
 - `FIB_REFUNDABLE_FOR`: The period for which transactions can be refunded (default: P7D, which stands for 7 days).
 - `FIB_CURRENCY`: The currency used for transactions with the FIB payment system (default: IQD).
 - `FIB_CALLBACK_URL`: The callback URL for handling payment notifications from the FIB payment system.
+- `FIB_REDIRECT_URL`: The redirect URL for handling payment redirection from the FIB payment system after payment.
 - `FIB_ACCOUNT`: The FIB payment account identifier.
 
 Make sure to set these environment variables appropriately in your application's environment configuration.
@@ -135,7 +136,7 @@ Make sure you have installed all required dependencies using Composer:
       
       try {
         // Create a new payment
-        $paymentResponse = $paymentService->createPayment(1000, 'http://localhost/callback', 'Test payment description');
+        $paymentResponse = $paymentService->createPayment(1000, 'http://localhost/callback', 'Test payment description', 'https://your-redirect-url.com');
         $paymentData = json_decode($paymentResponse->getBody(), true);
         
          // This should typically be saved in a database or cache for real implementations

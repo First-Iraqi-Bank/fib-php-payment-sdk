@@ -7,6 +7,7 @@
     'refundable_for' => $_ENV['FIB_REFUNDABLE_FOR'] ?? 'P7D',
     'currency' => $_ENV['FIB_CURRENCY'] ?? 'IQD',
     'callback' => $_ENV['FIB_CALLBACK_URL'],
+    'redirectUri' => $_ENV['FIB_REDIRECT_URL'],
     'auth_account' => $_ENV['FIB_ACCOUNT'] ?? 'default',
     'clients' => [
       'default' => [
