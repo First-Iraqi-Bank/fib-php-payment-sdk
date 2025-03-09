@@ -160,7 +160,7 @@ class FIBPaymentIntegrationService implements FIBPaymentIntegrationServiceInterf
             ],
             'statusCallbackUrl' => $callback ?? $this->config['callback'],
             'description' => $description ?? '',
-            'redirectUri' => $redirectUri ?? $this->config['redirectUri'],
+            'redirectUri' => $redirectUri ?? '',
             'refundableFor' => $this->config['refundable_for'],
         ];
     }
