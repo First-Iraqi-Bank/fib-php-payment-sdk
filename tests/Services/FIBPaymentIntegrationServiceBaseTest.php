@@ -56,7 +56,7 @@ class FIBPaymentIntegrationServiceBaseTest extends BaseTestCase
         $service = new FIBPaymentIntegrationService($mockAuth);
         $this->set_private_property($service, $mockClient);
 
-        $response = $service->createPayment(1000, 'https://example.com/callback', 'Test payment');
+        $response = $service->createPayment(1000, 'https://example.com/callback', 'Test payment', 'https://example.com');
 
         $this->assertEquals(201, $response->getStatusCode());
     }
@@ -124,7 +124,7 @@ class FIBPaymentIntegrationServiceBaseTest extends BaseTestCase
         $service = new FIBPaymentIntegrationService($mockAuth);
         $this->set_private_property($service, $mockClient);
 
-        $response = $service->createPayment(1000, 'https://example.com/callback', 'Test payment');
+        $response = $service->createPayment(1000, 'https://example.com/callback', 'Test payment', 'https://example.com');
         $statusCode = $response['status_code'] ?? null;
         $message = $response['message']['error'] ?? null;
 
@@ -147,7 +147,7 @@ class FIBPaymentIntegrationServiceBaseTest extends BaseTestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Failed to POST request due to: Request failed');
 
-        $service->createPayment(1000, 'https://example.com/callback', 'Test payment');
+        $service->createPayment(1000, 'https://example.com/callback', 'Test payment', 'https://example.com');
     }
 
     /**
@@ -163,7 +163,7 @@ class FIBPaymentIntegrationServiceBaseTest extends BaseTestCase
         $service = new FIBPaymentIntegrationService($mockAuth);
         $this->set_private_property($service, $mockClient);
 
-        $response = $service->createPayment(1000, 'https://example.com/callback', 'Test payment');
+        $response = $service->createPayment(1000, 'https://example.com/callback', 'Test payment', 'https://example.com');
 
         $this->assertNull($response);
     }

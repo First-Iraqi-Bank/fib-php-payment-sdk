@@ -104,17 +104,18 @@ class FIBPaymentIntegrationService implements FIBPaymentIntegrationServiceInterf
     }
 
     /**
-     * Creates a payment with the given amount, callback URL, and description.
+     * Creates a payment with the given amount, callback URL, redirect URL, and description.
      *
      * @param int $amount
      * @param mixed $callback
      * @param mixed $description
+     * @param mixed $redirectUri
      * @return array|null|ResponseInterface
      * @throws Exception
      */
-    public function createPayment(int $amount, $callback = null, $description = null)
+    public function createPayment(int $amount, $callback = null, $description = null, $redirectUri = null)
     {
-        $data = $this->getPaymentData($amount, $callback, $description);
+        $data = $this->getPaymentData($amount, $callback, $description, $redirectUri);
         return $this->postRequest("{$this->baseUrl}/payments", $data);
     }
 
@@ -142,14 +143,15 @@ class FIBPaymentIntegrationService implements FIBPaymentIntegrationServiceInterf
     }
 
     /**
-     * Gets the payment data with the given amount, callback URL, and description.
+     * Gets the payment data with the given amount, callback URL, redirect URL, and description.
      *
      * @param int $amount
      * @param mixed $callback
      * @param mixed $description
+     * @param mixed $redirectUri
      * @return array
      */
-    public function getPaymentData(int $amount, $callback = null, $description = null): array
+    public function getPaymentData(int $amount, $callback = null, $description = null, $redirectUri = null): array
     {
         return [
             'monetaryValue' => [
@@ -158,6 +160,7 @@ class FIBPaymentIntegrationService implements FIBPaymentIntegrationServiceInterf
             ],
             'statusCallbackUrl' => $callback ?? $this->config['callback'],
             'description' => $description ?? '',
+            'redirectUri' => $redirectUri ?? '',
             'refundableFor' => $this->config['refundable_for'],
         ];
     }

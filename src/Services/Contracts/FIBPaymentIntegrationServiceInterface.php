@@ -4,7 +4,7 @@
   
   interface FIBPaymentIntegrationServiceInterface
   {
-    public function createPayment(int $amount, $callback, $description);
+    public function createPayment(int $amount, $callback, $description, $redirectUri);
     public function checkPaymentStatus($paymentId);
     public function handleCallback(string $paymentId,  string $status);
     public function refund(string $paymentId);
