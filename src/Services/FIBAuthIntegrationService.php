@@ -71,7 +71,6 @@
         'form_params' => [
           'grant_type' => $this->config['grant'],
         ],
-        'verify' => false,
       ]);
     }
     

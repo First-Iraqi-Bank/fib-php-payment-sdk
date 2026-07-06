@@ -45,7 +45,6 @@ class FIBPaymentIntegrationService implements FIBPaymentIntegrationServiceInterf
                         'Authorization' => 'Bearer ' . $token,
                         'Content-Type' => 'application/json',
                     ],
-                    'verify' => false,
                     'http_errors' => false
                 ];
 
